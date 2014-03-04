@@ -2,24 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-
-<title></title>
-
+<title>Concepts of Functional Programming</title>
 <meta name="description" content="">
-
-
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <link rel="stylesheet" href="css/reveal.min.css">
-  <link rel="stylesheet" href="css/theme/solarized-custom.css" id="theme">
-
-
-<!-- For syntax highlighting -->
-  <link rel="stylesheet" href="lib/css/zenburn.css">
-
+<link rel="stylesheet" href="css/theme/solarized-custom.css" id="theme">
+<link rel="stylesheet" href="lib/css/zenburn.css">
+<style>
+  .underline { text-decoration: underline; }
+  .strikethrough { text-decoration: line-through; }
+</style>
 
 <!-- If the query includes 'print-pdf', use the PDF print sheet -->
 <script>
@@ -27,92 +22,269 @@
     ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) +
     '.css" type="text/css" media="print">' );
 </script>
-
 <!--[if lt IE 9]>
 <script src="lib/js/html5shiv.js"></script>
 <![endif]-->
 </head>
-
 <body>
-
 <div class="reveal">
+  <div class="slides">
+    <section id="what-are-we-talking-about" class="level1">
+      <h1>What are we talking about?</h1>
+      <img class="fragment" src="images/itshardtobeacat.jpg"/>
+      <p class="fragment">It's hard to be a <span class="strikethrough">cat</span> functional programmer.
 
-<!-- Any section element inside of this container is displayed as a slide -->
-<div class="slides">
+      <aside class="notes">
+        Concepts that are common or required in functional languages or functional programming styles.
 
-<section>
-<h1></h1>
+        We're talking about this because it's hard to learn functional programming.
 
-<p>
-<h4></h4>
-</p>
-</section>
+        We'll be going through some basic concepts at a high level.
+        For each term, we'll see the following:
+        - A formal definition
+        - Two code examples (where applicable):
+        -- Javascript or Ruby
+        -- Haskell
+      </aside>
+    </section>
 
+    <section id="what-are-we-not-talking-about" class="level1">
+      <h1>What are we <span class="underline">not</span> talking about?</h1>
 
-<section id="concepts-of-functional-programming" class="level1">
-<h1>Concepts of Functional Programming</h1>
-<ul>
-<li>Immutability</li>
-<li>Higher Order Functions</li>
-<li>Currying</li>
-<li>Partial Application</li>
-<li>Functors</li>
-<li>Applicatives</li>
-<li>Monads</li>
-</ul>
-</section>
-<section id="immutability" class="level1">
-<h1>Immutability</h1>
-<p>TODO</p>
-</section>
-<section id="higher-order-functions" class="level1">
-<h1>Higher Order Functions</h1>
-<p>TODO</p>
-</section>
-<section id="currying" class="level1">
-<h1>Currying</h1>
-<p>TODO</p>
-</section>
-<section id="partial-application" class="level1">
-<h1>Partial Application</h1>
-<p>TODO</p>
-</section>
-<section id="functors" class="level1">
-<h1>Functors</h1>
-<p>TODO</p>
-</section>
-<section id="applicatives" class="level1">
-<h1>Applicatives</h1>
-<p>TODO</p>
-</section>
-<section id="monads" class="level1">
-<h1>Monads</h1>
-<p>TODO</p>
-</section>
+      <aside class="notes">
+        - Practical applications of these concepts
+        - Developing a good working reasoning of them
+        - Why they exist (save for brief statements)
+
+        This is preparation for your own dive into learning material.
+
+        These are not design patterns.
+      </aside>
+    </section>
+
+    <section id="lets-begin" class="level1">
+      <h1>Let's Begin</h1>
+      <pre><code data-trim class="haskell">
+module Main where
+  beginConceptsOfFP = beginTalk loadConcepts createTalk talkTitle
+    where talkTitle = "Concepts of Functional Programming"
+      </code></pre>
+    </section>
+
+    <section id="lambda-calculus" class="level1">
+      <h1>Lambda Calculus</h1>
+      <p class="fragment">A formal system in mathematical logic and computer science for expressing computation based on function abstraction and application using variable binding and substitution.</p>
+      <pre class="fragment"><code data-trim class="rb">
+ZERO  = -> p { -> x {       x    } }
+ONE   = -> p { -> x {     p[x]   } }
+TWO   = -> p { -> x {   p[p[x]]  } }
+THREE = -> p { -> x { p[p[p[x]]] } }
+      </code></pre>
+      <p class="fragment"><a href="http://codon.com/programming-with-nothing">Coding With Nothing</a> - Tom Stuart</p>
+    </section>
+
+    <section id="immutability" class="level1">
+      <h1>Immutability</h1>
+      <p class="fragment">Unchanging over time or unable to be changed</p>
+      <pre class="fragment"><code data-trim class="javascript">
+var mutablePerson = new MutablePerson("Bradley", "Spaulding");
+mutablePerson.name; // => "Bradley Spaulding"
+mutablePerson.firstName = "Charlie";
+mutablePerson.name; // => "Charlie Spaulding"
+
+var immutablePerson = new ImmutablePerson("Bradley", "Spaulding");
+immutablePerson.name; // => "Bradley Spaulding"
+immutablePerson.firstName = "Charlie"; // => Error!
+      </pre></code>
+      <aside class="notes">
+        Easier to demonstrate in terms of its opposite.
+        In a dynamically typed language, violating immutability would be a runtime error.
+        In a statically typed language, violating immutability would be a compilation error.
+      </aside>
+    </section>
+
+    <section id="higher-order-functions" class="level1">
+      <h1>Higher Order Function</h1>
+      <p class="fragment">A function that receives a function as an argument...</p>
+      <pre class="fragment"><code data-trim class="javascript">
+var downloadAllCatPhotos = function() {
+  // ...
+};
+document.addEventListener('DOMContentLoaded', downloadAllCatPhotos);
+      </code></pre>
+      <p class="fragment">and/or returns a function as its result...</p>
+      <pre class="fragment"><code data-trim class="javascript">
+var zero = function(p) { return function(x) { return x; }; }
+var one  = function(p) { return function(x) { return p(x); }; }
+var two  = function(p) { return function(x) { return p(p(x)); }; }
+      </code></pre>
+      <pre class="fragment"><code data-trim class="javascript">
+var Y = function(le) {
+  return function(f) {
+    return f(f);
+  }(function(f) {
+    return le(
+      function(x) { return (f(f))(x); }
+    );
+  });
+};
+      </code></pre>
+      <aside class="notes">
+        We *sort of* do this all the time in ruby when we pass blocks around.
+        We absolutely do this in javascript when we use event handlers.
+      </aside>
+    </section>
+
+    <section id="currying" class="level1">
+      <h1>Currying</h1>
+      <p class="fragment">transforming a function that takes multiple arguments in such a way that it can be called as a chain of functions, each with a single argument</p>
+      <pre class="fragment"><code data-trim class="javascript">
+var add = function(a,b) {
+  return a + b;
+};
+add(3,4); // => 7
+      </code></pre>
+      <pre class="fragment"><code data-trim class="javascript">
+var curriedAdd = function(a) {
+  return function(b) {
+    return a + b;
+  };
+};
+curriedAdd(3)(4); // => 7
+      </code></pre>
+      <pre class="fragment"><code data-trim class="haskell">
+Prelude> let add a b = a + b
+Prelude> add 3 4
+7
+Prelude> :t add
+add :: Num a => a -> a -> a
+      </code></pre>
+    </section>
+
+    <section id="partial-application" class="level1">
+      <h1>Partial Application</h1>
+      <p class="fragment">the process of fixing, or binding, a number of arguments to a function, producing another function of smaller arity</p>
+      <pre class="fragment"><code data-trim class="javascript">
+var add = function(x,y) {
+  return x + y;
+};
+add(1,2); // => 3
+
+var add1 = function(x) {
+  return add(1,x);
+};
+add1(2); // => 3
+      </code></pre>
+      <pre class="fragment"><code data-trim class="haskell">
+Prelude> let add a b = a + b
+Prelude> :t add
+add :: Num a => a -> a -> a
+Prelude> let add1 = add 1
+Prelude> :t add1
+add1 :: Integer -> Integer
+      </code></pre>
+    </section>
+
+    <section id="pattern-matching" class="level1">
+      <h1>Pattern Matching</h1>
+      <p class="fragment">checking a perceived sequence of tokens for the presence of the constituents of some pattern</p>
+      <p class="fragment">used as a conditional programming construct</p>
+      <pre class="fragment"><code data-trim class="haskell">
+length [] = 0
+length (head:tail) = 1 + length tail
+      </code></pre>
+      <pre class="fragment"><code data-trim class="haskell">
+factorial 0 = 1
+factorial n = n * factorial (n - 1)
+      </code></pre>
+    </section>
+
+    <section id="algebraic-data-types" class="level1">
+      <h1>Algebraic Data Types</h1>
+      <p class="fragment">a type formed by combining other types</p>
+      <pre class="fragment"><code data-trim class="haskell">
+data Maybe a = Nothing | Just a
+      </code></pre>
+      <pre class="fragment"><code data-trim class="haskell">
+data Tree a = EmptyTree | Node a (Tree a) (Tree a)
+      </code></pre>
+    </section>
+
+    <section id="functor" class="level1">
+      <h1>Functor</h1>
+      <p class="fragment">A mapping between types.</p>
+      <pre class="fragment"><code data-trim class="rb">
+(1..100).map(&:to_s) # to_s is a functor!
+      </code></pre>
+      <pre class="fragment"><code data-trim class="haskell">
+class Functor f where
+  fmap :: (a -> b) -> f a -> f b
+      </code></pre>
+      <pre class="fragment"><code data-trim class="haskell">
+data Maybe a = Nothing | Just a
+      </code></pre>
+      <pre class="fragment"><code data-trim class="haskell">
+instance Functor Maybe where
+    fmap f (Just x) = Just (f x)
+    fmap f Nothing = Nothing
+      </code></pre>
+      <pre class="fragment"><code data-trim class="haskell">
+ghci> fmap (*2) (Just 200)
+Just 400
+ghci> fmap (*2) Nothing
+Nothing
+      </code></pre>
+
+      <aside class="notes">
+        Comes from category theory in mathematics, where you're mapping values between categories.
+
+        A common analog in OO might be a constructor function, which creates a new type from other types.
+
+        Note that in haskell, the typeclass Functor refers also to the thing that can be mapped over. i.e: lists, trees, custom data types, etc.
+
+        Links:
+          http://learnyouahaskell.com/making-our-own-types-and-typeclasses#the-functor-typeclass
+      </aside>
+    </section>
+
+    <section id="applicative" class="level1">
+      <h1>Applicative</h1>
+      <p style="font-style: italic;">aka Applicative Functor</p>
+      <p>TODO</p>
+    </section>
+
+    <section id="monad" class="level1">
+      <h1>Monad</h1>
+      <p>TODO</p>
+    </section>
+
+    <section id="reactivity" class="level1">
+      <h1>Reactivity</h1>
+      <p>TODO</p>
+    </section>
 </div>
 
 <script src="lib/js/head.min.js"></script>
 <script src="js/reveal.min.js"></script>
-
 <script>
   // Full list of configuration options available here:
   // https://github.com/hakimel/reveal.js#configuration
   Reveal.initialize({
-    controls: true,
+    controls: false,
     progress: true,
+    slideNumber: true,
     history: true,
-    center: false,
+    center: true,
 
   // available themes are in /css/theme
       theme: Reveal.getQueryHash().theme || 'solarized-custom',
-  
+
   // default/cube/page/concave/zoom/linear/fade/none
       transition: Reveal.getQueryHash().transition || 'default',
-  
+
   // Optional libraries used to extend on reveal.js
   dependencies: [
     { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-    { src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
     { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
     { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
     { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
@@ -122,6 +294,5 @@
   });
 
 </script>
-
 </body>
 </html>
