@@ -34,32 +34,40 @@
       <img class="fragment" src="images/itshardtobeacat.jpg"/>
       <p class="fragment">It's hard to be a <span class="strikethrough">cat</span> functional programmer.
 
-      <aside class="notes">
-        Concepts that are common or required in functional languages or functional programming styles.
+      <aside class="notes" data-markdown>
+Concepts that are common or required in functional languages or functional programming styles.
 
-        We're talking about this because it's hard to learn functional programming.
+We're talking about this because it's hard to learn functional programming.
 
-        We'll be going through some basic concepts at a high level.
-        For each term, we'll see the following:
-        - A formal definition
-        - Two code examples (where applicable):
-        -- Javascript or Ruby
-        -- Haskell
+We'll be going through some basic concepts at a high level.
+
+For each term, we'll see the following:
+
+* A formal definition
+* Two code examples (where applicable):
+  * Javascript or Ruby
+  * Haskell
       </aside>
     </section>
 
     <section id="what-are-we-not-talking-about" class="level1">
       <h1>What are we <span class="underline">not</span> talking about?</h1>
 
-      <aside class="notes">
-        - Practical applications of these concepts
-        - Developing a good working reasoning of them
-        - Why they exist (save for brief statements)
+      <aside class="notes" data-markdown>
+* Practical applications of these concepts
+* Developing a good working reasoning of them
+* Why they exist (save for brief statements)
 
-        This is preparation for your own dive into learning material.
+This is preparation for your own dive into learning material.
 
-        These are not design patterns.
+These are not design patterns.
       </aside>
+    </section>
+
+    <section id="warning" class="level1">
+      <img src="images/warning.png" style="border:none;box-shadow:none;">
+      <h2>Gross Oversimplifications Ahead</h2>
+      <p style="font-style:italic;">Some examples can be better</p>
     </section>
 
     <section id="lets-begin" class="level1">
@@ -73,7 +81,7 @@ module Main where
 
     <section id="lambda-calculus" class="level1">
       <h1>Lambda Calculus</h1>
-      <p class="fragment">A formal system in mathematical logic and computer science for expressing computation based on function abstraction and application using variable binding and substitution.</p>
+      <p class="fragment">A formal system for expressing computation based on function abstraction and application using variable binding and substitution.</p>
       <pre class="fragment"><code data-trim class="rb">
 ZERO  = -> p { -> x {       x    } }
 ONE   = -> p { -> x {     p[x]   } }
@@ -96,11 +104,31 @@ var immutablePerson = new ImmutablePerson("Bradley", "Spaulding");
 immutablePerson.name; // => "Bradley Spaulding"
 immutablePerson.firstName = "Charlie"; // => Error!
       </pre></code>
-      <aside class="notes">
-        Easier to demonstrate in terms of its opposite.
-        In a dynamically typed language, violating immutability would be a runtime error.
-        In a statically typed language, violating immutability would be a compilation error.
+      <aside class="notes" data-markdown>
+Easier to demonstrate in terms of its opposite.
+
+In a dynamically typed language, violating immutability would be a runtime error.
+
+In a statically typed language, violating immutability would be a compilation error.
       </aside>
+    </section>
+
+    <section id="laziness" class="level1">
+      <h1>Laziness</h1>
+      <p class="fragment">deferring the computation of a value until the value is required by another computation</p>
+      <pre class="fragment"><code data-trim class="rb">
+irb> (1..Float::INFINITY).lazy.map {|n| n * n }.first(10)
+=> [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+      </code></pre>
+      <pre class="fragment"><code data-trim class="haskell">
+ghci> take 10 (map (\n -> n * n) [1..])
+[1,4,9,16,25,36,49,64,81,100]
+      </code></pre>
+      <pre class="fragment"><code data-trim class="haskell">
+ghci> let fibs = 1 : 1 : zipWith (+) fibs (tail fibs)
+ghci> take 10 fibs
+[1,1,2,3,5,8,13,21,34,55]
+      </code></pre>
     </section>
 
     <section id="higher-order-functions" class="level1">
@@ -129,9 +157,13 @@ var Y = function(le) {
   });
 };
       </code></pre>
-      <aside class="notes">
-        We *sort of* do this all the time in ruby when we pass blocks around.
-        We absolutely do this in javascript when we use event handlers.
+      <p class="fragment">
+        <a href="http://www.youtube.com/watch?v=FITJMJjASUs">Y Not - Jim Weirich</a>
+      </p>
+      <aside class="notes" data-markdown>
+We *sort of* do this all the time in ruby when we pass blocks around.
+
+We absolutely do this in javascript when we use event handlers.
       </aside>
     </section>
 
@@ -235,37 +267,112 @@ ghci> fmap (*2) Nothing
 Nothing
       </code></pre>
 
-      <aside class="notes">
-        Comes from category theory in mathematics, where you're mapping values between categories.
+      <aside class="notes" data-markdown>
+Comes from category theory in mathematics, where you're mapping values between categories.
 
-        A common analog in OO might be a constructor function, which creates a new type from other types.
+A common analog in OO might be a constructor function, which creates a new type from other types.
 
-        Note that in haskell, the typeclass Functor refers also to the thing that can be mapped over. i.e: lists, trees, custom data types, etc.
+Note that in haskell, the typeclass Functor refers also to the thing that can be mapped over. i.e: lists, trees, custom data types, etc.
 
-        Links:
-          http://learnyouahaskell.com/making-our-own-types-and-typeclasses#the-functor-typeclass
+Links:
+
+* http://learnyouahaskell.com/making-our-own-types-and-typeclasses#the-functor-typeclass
       </aside>
     </section>
 
     <section id="applicative" class="level1">
       <h1>Applicative</h1>
       <p style="font-style: italic;">aka Applicative Functor</p>
-      <p>TODO</p>
+      <p class="fragment">a functor that can be applied to a specific data type*</p>
+      <p class="fragment" style="font-size: 0.8em; font-style: italic;">
+        *This is my own definition, because I couldn't find a good one.
+      </p>
+      <pre class="fragment"><code data-trim class="haskell">
+instance Applicative Maybe where
+  pure = Just
+  Nothing <*> _ = Nothing
+  (Just f) <*> something = fmap f something
+      </code></pre>
+      <pre class="fragment"><code data-trim class="haskell">
+ghci> Just (+3) <*> Just 9
+Just 12
+ghci> pure (+3) <*> Just 10
+Just 13
+ghci> pure (+3) <*> Just 9
+Just 12
+ghci> Just (++"hahah") <*> Nothing
+Nothing
+ghci> Nothing <*> Just "woot"
+Nothing
+      </code></pre>
+
+      <aside class="notes">
+A functor is just a function that takes one type and returns another.
+An applicative functor also specifies how to operate on complex data types.
+
+kind of like defining an instance method on a class, only without any concept of a containing state
+
+Provides more structure than a Functor, but less than a Monad.
+
+There's one more big concept, and it builds on applicatives.
+With Applicative Functors, we can run computations on generic data types.
+We can take an arbitrary data type, and an arbitrary computation, and combine them.
+
+What we're missing is a structure for composing these operations.
+Enter the unreasonably scariest word of them all: Monad
+      </aside>
     </section>
 
     <section id="monad" class="level1">
-      <h1>Monad</h1>
-      <p>TODO</p>
+      <section>
+        <h1>Monad</h1>
+        <p class="fragment">a structure that represents computations defined as sequences of steps</p>
+        <p class="fragment">3 components:</p>
+        <ul class="fragment">
+          <li>a container type</li>
+          <li>an operation to put a value in the container called <em>wrap</em></li>
+          <li>an operation to retrieve a value called <em>pass</em> (or <em>bind</em>)</li>
+        </ul>
+      </section>
+      <section>
+        <h1>Monad Example: Promises</h1>
+        <pre><code data-trim class="javascript">
+$('/slow-data.json')
+  .then(filterBySearchParameters({
+    // some query info ...
+  });
+  .then(updateView(theView))
+  .fail(reportError);
+        </code></pre>
+        <pre class="fragment"><code data-trim class="haskell">
+main = do
+  json <- getURL '/slow-data.json'
+  data <- parseJSON json
+  filtered <- filterBySearchParameters queryInfo
+  return updateView theView filtered
+        </code></pre>
+      </section>
+
+      <aside class="notes" data-trim data-markdown>
+different types of monads provide different operations to values
+
+You've probably already heard, and maybe used, Monads. A Promise is a monadic pattern!
+      </aside>
     </section>
 
     <section id="reactivity" class="level1">
       <h1>Reactivity</h1>
-      <p>TODO</p>
+      <p class="fragment">reactive programs are defined as a series of data transformations operating on streams</p>
+      <p class="fragment">
+        user input can be modeled as a data stream!
+      </p>
+      <p class="fragment">
+        More to come in a later talk...
+      </p>
     </section>
 
-    <section id="recap" class="level1">
-      <h1>Recap</h1>
-      <p>TODO</p>
+    <section id="end" class="level1">
+      <h1>The End</h1>
     </section>
 </div>
 
